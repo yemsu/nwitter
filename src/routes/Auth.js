@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth"
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, GithubAuthProvider, signInWithPopup } from "firebase/auth"
 import { auth } from "fBase"
 
 const Auth = () => {
@@ -16,6 +16,7 @@ const Auth = () => {
       setPassword(value)
     }
   }
+
   const onSubmit = async (e) => {
     e.preventDefault() // submit 이벤트 새로고침하는 이슈 있어 사용
     try {
@@ -30,7 +31,22 @@ const Auth = () => {
       setError(error.message)
     }
   }
+
   const toggleAccount = () => setIsNewAccount((prev) => !prev)
+
+  const onSocialClick = async (e) => {
+    const { target: { name } } = e
+    let provider
+
+    if (name === 'google') {
+      provider = new GoogleAuthProvider()
+    } else if (name === 'github') {
+      provider = new GithubAuthProvider()
+    }
+    console.log(provider)
+    const data = await signInWithPopup(auth, provider)
+    console.log(data)
+  }
 
   return (
     <div>
@@ -61,8 +77,8 @@ const Auth = () => {
         {error && <p>{error}</p>}
       </form>
       <div>
-        <button>Continue with Google</button>
-        <button>Continue with Github</button>
+        <button onClick={onSocialClick} name="google">Continue with Google</button>
+        <button onClick={onSocialClick} name="github">Continue with Github</button>
       </div>
     </div>
   )
