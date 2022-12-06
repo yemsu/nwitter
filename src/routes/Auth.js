@@ -1,9 +1,12 @@
 import { useState } from "react"
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth"
+import { auth } from "fBase"
 
 const Auth = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isNewAccount, setIsNewAccount] = useState(true)
+  const [error, setError] = useState('')
 
   const onChange = (e) => {
     const { target: { name, value } } = e
@@ -13,12 +16,18 @@ const Auth = () => {
       setPassword(value)
     }
   }
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault() // submit 이벤트 새로고침하는 이슈 있어 사용
-    if (isNewAccount) {
-
-    } else {
-      
+    try {
+      let data
+      if (isNewAccount) {
+        data = await createUserWithEmailAndPassword(auth, email, password)
+      } else {
+        data = await signInWithEmailAndPassword(email, password)
+      }
+      console.log(data)
+    } catch (error) {
+      setError(error.message)
     }
   }
 
@@ -43,9 +52,9 @@ const Auth = () => {
         />
         <input
           type="submit"
-          value="Log In"
           value={isNewAccount ? 'Create Account' : 'Log In'}
         />
+        {error && <p>{error}</p>}
       </form>
       <div>
         <button>Continue with Google</button>
