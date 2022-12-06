@@ -30,6 +30,7 @@ const Auth = () => {
       setError(error.message)
     }
   }
+  const toggleAccount = () => setIsNewAccount((prev) => !prev)
 
   return (
     <div>
@@ -54,6 +55,9 @@ const Auth = () => {
           type="submit"
           value={isNewAccount ? 'Create Account' : 'Log In'}
         />
+        <p onClick={toggleAccount}>
+          {isNewAccount ? 'Sign In' : 'Created Account'}
+        </p>
         {error && <p>{error}</p>}
       </form>
       <div>
